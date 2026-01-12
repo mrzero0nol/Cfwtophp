@@ -39,13 +39,15 @@ Aplikasi ini adalah toko online produk digital (seperti akun premium, voucher, d
 
 ## Langkah 3: Setup Node.js App
 
+**Catatan untuk Subdomain:** Jika Anda ingin menggunakan subdomain (contoh: `store.domainanda.com`), pastikan Anda sudah membuat subdomain tersebut di menu **Domains** atau **Subdomains** di cPanel terlebih dahulu.
+
 1. Di cPanel, cari menu **Setup Node.js App**.
 2. Klik **Create Application**.
 3. Isi form berikut:
    - **Node.js Version**: Pilih versi **18.x** atau **20.x** (Disarankan versi terbaru yang LTS).
    - **Application Mode**: `Production`.
    - **Application Root**: Masukkan path folder tempat upload file tadi (misal: `toko-app`).
-   - **Application URL**: Pilih domain/subdomain toko Anda.
+   - **Application URL**: Pilih domain atau subdomain yang diinginkan dari dropdown.
    - **Application Startup File**: Ketik `server.js`.
 4. Klik **Create**.
 5. Setelah created, klik tombol **Run NPM Install** (tunggu hingga selesai/sukses).
@@ -82,7 +84,7 @@ Aplikasi ini adalah toko online produk digital (seperti akun premium, voucher, d
 
 1. Kembali ke menu **Setup Node.js App**.
 2. Klik tombol **Restart Application**.
-3. Buka URL domain Anda. Toko sudah siap digunakan!
+3. Buka URL domain/subdomain Anda. Toko sudah siap digunakan!
 
 ---
 
