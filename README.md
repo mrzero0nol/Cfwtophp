@@ -50,7 +50,8 @@ Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdoma
    - `package.json`
    - `.env.example`
    - `schema.sql` (opsional jika sudah diimport)
-   - folder `node_modules` (JANGAN diupload, nanti kita install otomatis di server).
+
+*Catatan: Anda tidak perlu mengupload folder `node_modules` karena folder ini akan dibuat otomatis oleh server pada langkah berikutnya.*
 
 ---
 
@@ -65,7 +66,7 @@ Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdoma
    - **Application URL**: **PENTING!** Pilih domain atau subdomain yang sudah Anda siapkan di Langkah 1 tadi.
    - **Application Startup File**: Ketik `server.js`.
 4. Klik tombol **Create** di pojok kanan atas.
-5. Setelah aplikasi terbuat, klik tombol **Run NPM Install** (tunggu hingga proses selesai/sukses).
+5. Setelah aplikasi terbuat, klik tombol **Run NPM Install** (tunggu hingga proses selesai/sukses). Tombol ini akan mendownload library yang dibutuhkan dan membuat folder `node_modules`.
 
 ---
 
