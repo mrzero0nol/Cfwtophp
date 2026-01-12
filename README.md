@@ -40,10 +40,14 @@ Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdoma
 
 ## Langkah 3: Upload File
 
+Anda bebas memilih lokasi folder penyimpanan file aplikasi, namun disarankan mengikuti panduan berikut demi keamanan.
+
 1. Buka **File Manager** di cPanel.
-2. Buat folder baru khusus untuk aplikasi ini (misal: `toko-app`).
-   - *Saran: Buat folder ini di "Home Directory" (sejajar dengan public_html), jangan di dalam public_html agar file source code aman.*
-3. Upload semua file berikut ke dalam folder `toko-app`:
+2. **Lokasi Penyimpanan:**
+   - **Disarankan (Lebih Aman):** Buat folder baru di "Home Directory" (di luar folder `public_html`). Contoh: `/home/username/toko-app`. Ini mencegah orang lain melihat source code Anda.
+   - **Alternatif:** Boleh juga di dalam folder subdomain (misal `public_html/subdomain`), namun pastikan file `.env` aman.
+3. Buka folder yang baru dibuat tersebut.
+4. Upload semua file berikut:
    - `server.js`
    - `db.js`
    - `template.html`
@@ -51,7 +55,7 @@ Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdoma
    - `.env.example`
    - `schema.sql` (opsional jika sudah diimport)
 
-*Catatan: Anda tidak perlu mengupload folder `node_modules` karena folder ini akan dibuat otomatis oleh server pada langkah berikutnya.*
+*Catatan: Jangan upload folder `node_modules`. Folder ini akan dibuat otomatis nanti.*
 
 ---
 
@@ -62,7 +66,9 @@ Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdoma
 3. Isi form konfigurasi:
    - **Node.js Version**: Pilih versi **18.x** atau **20.x** (Disarankan versi terbaru yang LTS).
    - **Application Mode**: Pilih `Production`.
-   - **Application Root**: Masukkan nama folder tempat upload file tadi (contoh: `toko-app`).
+   - **Application Root**: Masukkan nama folder tempat Anda mengupload file tadi.
+     - Jika di folder home: `toko-app`
+     - Jika di dalam public_html: `public_html/toko-app`
    - **Application URL**: **PENTING!** Pilih domain atau subdomain yang sudah Anda siapkan di Langkah 1 tadi.
    - **Application Startup File**: Ketik `server.js`.
 4. Klik tombol **Create** di pojok kanan atas.
