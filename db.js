@@ -68,6 +68,7 @@ async function dbDelete(key) {
         connection.release();
     } catch (err) {
         console.error('Database connection failed:', err.message);
+        console.error('TIP: Pastikan variabel lingkungan (Environment Variables) DB_HOST, DB_USER, DB_PASS, DB_NAME sudah diatur dengan benar di cPanel atau file .env.');
     }
 })();
 

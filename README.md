@@ -1,129 +1,101 @@
-# Panduan Deploy Toko Digital di cPanel (Node.js + MySQL)
+# Panduan Deploy Web Toko Digital ke cPanel (Node.js)
 
-Aplikasi ini adalah toko online produk digital (seperti akun premium, voucher, dll) yang menggunakan **Node.js** sebagai backend dan **MySQL** sebagai database.
+Aplikasi ini adalah toko online produk digital (seperti Cloudflare Worker sebelumnya) yang sudah dikonversi agar bisa berjalan di cPanel menggunakan **Node.js** dan **MySQL**.
 
-## Persyaratan
-- Hosting cPanel yang mendukung fitur **Setup Node.js App**.
-- Akses ke **MySQL Database**.
+## ⚠️ PENTING: SOLUSI ERROR (JIKA MUNCUL)
+
+Jika Anda melihat error seperti di bawah ini saat mengakses web atau melihat log:
+
+### 1. Error: `Cannot find module 'express'`
+**Penyebab:** Anda belum menginstall library yang dibutuhkan.
+**Solusi:**
+- Masuk ke menu **Setup Node.js App** di cPanel.
+- Pastikan Anda sudah menekan tombol **Run NPM Install**.
+- Jika tombol tersebut tidak bisa diklik, pastikan file `package.json` sudah terupload dengan benar.
+
+### 2. Error: `Access denied for user 'root'@'localhost' (using password: NO)`
+**Penyebab:** Aplikasi gagal terhubung ke Database karena username/password database belum disetting.
+**Solusi:**
+- Buat database dan user di **MySQL Database Wizard** cPanel.
+- Masukkan detail database tersebut ke menu **Application Environment Variables** di halaman setup Node.js cPanel (Lihat Langkah 5 di bawah).
 
 ---
 
-## Langkah 1: Persiapan Domain / Subdomain
+## Langkah-Langkah Deploy
 
-Sebelum menginstall aplikasi, pastikan Anda sudah menyiapkan domain atau subdomain yang akan digunakan.
+Ikuti panduan ini langkah demi langkah agar sukses.
 
+### Langkah 1: Persiapan Database
 1. Login ke cPanel.
-2. Jika ingin menggunakan **Domain Utama** (misal: `tokosaya.com`), pastikan domain sudah terhubung ke hosting.
-3. Jika ingin menggunakan **Subdomain** (misal: `app.tokosaya.com`):
-   - Buka menu **Domains** (atau **Subdomains** di cPanel versi lama).
-   - Klik **Create A New Domain**.
-   - Masukkan nama subdomain (contoh: `app.tokosaya.com`).
-   - Pastikan *Document Root* tidak menimpa folder website lain (defaultnya akan membuat folder baru, biarkan saja).
-   - Klik **Submit**.
+2. Cari menu **MySQL Database Wizard**.
+3. Buat Database Baru (contoh: `namasaya_tokodb`).
+4. Buat User Database Baru (contoh: `namasaya_userdb`). **Catat Passwordnya!**
+5. Berikan hak akses **ALL PRIVILEGES** user tersebut ke database yang baru dibuat.
+6. Buka **phpMyAdmin**, pilih database yang baru dibuat.
+7. Klik tab **Import**, pilih file `schema.sql` yang ada di folder ini, lalu klik **Go**.
 
-*Domain/Subdomain ini nanti akan muncul di pilihan saat kita men-setup Node.js.*
-
----
-
-## Langkah 2: Persiapan Database
-
-1. Buka menu **MySQL® Databases** di cPanel.
-2. Buat database baru (misal: `usercpanel_toko`).
-3. Buat user database baru (misal: `usercpanel_admin`) dan atur passwordnya (Simpan password ini!).
-4. Tambahkan user ke database tersebut dan centang **ALL PRIVILEGES**.
-5. Buka menu **phpMyAdmin**.
-6. Pilih database yang baru dibuat di sidebar kiri.
-7. Klik tab **Import**, upload file `schema.sql` yang ada di folder project ini, lalu klik **Go**.
-   - *Alternatif manual*: Klik tab **SQL**, copy isi file `schema.sql` dan paste di kolom query, lalu klik **Go**.
-
----
-
-## Langkah 3: Upload File
-
-Anda bebas memilih lokasi folder penyimpanan file aplikasi, namun disarankan mengikuti panduan berikut demi keamanan.
-
+### Langkah 2: Upload File
 1. Buka **File Manager** di cPanel.
-2. **Lokasi Penyimpanan:**
-   - **Disarankan (Lebih Aman):** Buat folder baru di "Home Directory" (di luar folder `public_html`). Contoh: `/home/username/toko-app`. Ini mencegah orang lain melihat source code Anda.
-   - **Alternatif:** Boleh juga di dalam folder subdomain (misal `public_html/subdomain`), namun pastikan file `.env` aman.
-3. Buka folder yang baru dibuat tersebut.
-4. Upload semua file berikut:
+2. Buat folder baru (misal: `toko-app`) di luar `public_html` (agar lebih aman), atau di dalam `public_html` juga boleh.
+3. Upload semua file berikut ke folder tersebut:
    - `server.js`
    - `db.js`
-   - `template.html`
    - `package.json`
-   - `.env.example`
+   - `template.html`
    - `schema.sql` (opsional jika sudah diimport)
+   - `.env` (jika Anda membuatnya manual, tapi disarankan pakai cara Langkah 5).
 
-*Catatan: Jangan upload folder `node_modules`. Folder ini akan dibuat otomatis nanti.*
-
----
-
-## Langkah 4: Setup Node.js App
-
-1. Di cPanel, cari menu **Setup Node.js App**.
+### Langkah 3: Setup Node.js App
+1. Cari menu **Setup Node.js App** di cPanel.
 2. Klik **Create Application**.
-3. Isi form konfigurasi:
-   - **Node.js Version**: Pilih versi **18.x** atau **20.x** (Disarankan versi terbaru yang LTS).
-   - **Application Mode**: Pilih `Production`.
-   - **Application Root**: Masukkan nama folder tempat Anda mengupload file tadi.
-     - Jika di folder home: `toko-app`
-     - Jika di dalam public_html: `public_html/toko-app`
-   - **Application URL**: **PENTING!** Pilih domain atau subdomain yang sudah Anda siapkan di Langkah 1 tadi.
-   - **Application Startup File**: Ketik `server.js`.
-4. Klik tombol **Create** di pojok kanan atas.
-5. Setelah aplikasi terbuat, klik tombol **Run NPM Install** (tunggu hingga proses selesai/sukses). Tombol ini akan mendownload library yang dibutuhkan dan membuat folder `node_modules`.
+3. Isi form:
+   - **Node.js Version:** Pilih versi **18** atau **20** (Recommended).
+   - **Application Mode:** `Production`.
+   - **Application Root:** Masukkan nama folder tempat upload tadi (misal: `toko-app`).
+   - **Application URL:** Pilih domain/subdomain yang diinginkan.
+   - **Application Startup File:** `server.js`
+4. Klik **Create**.
+
+### Langkah 4: Install Dependencies
+1. Setelah aplikasi terbuat, scroll ke bawah sedikit di halaman Node.js App tersebut.
+2. Klik tombol **Run NPM Install**.
+   - *Tunggu prosesnya selesai (biasanya indikator loading berputar).*
+   - Jika tombol ini tidak aktif, pastikan file `package.json` ada di dalam folder `Application Root`.
+
+### Langkah 5: Konfigurasi Database (Environment Variables)
+Di halaman **Setup Node.js App** yang sama, cari bagian **Environment Variables** (biasanya tombol "Add Variable").
+Tambahkan variabel berikut sesuai data database Langkah 1:
+
+| Name | Value (Contoh) |
+|------|----------------|
+| `DB_HOST` | `localhost` |
+| `DB_USER` | `namasaya_userdb` |
+| `DB_PASS` | `password_rahasia_anda` |
+| `DB_NAME` | `namasaya_tokodb` |
+| `ADMIN_PASSWORD` | `ganti_password_admin123` |
+| `PAKASIR_API_KEY` | `(API Key Pakasir Anda)` |
+| `PAKASIR_SLUG` | `(Slug Toko Pakasir Anda)` |
+
+*Catatan: Jika cPanel Anda tidak memiliki menu Environment Variables, Anda bisa mengedit file `.env.example` menjadi `.env` di File Manager, lalu isi datanya di sana.*
+
+### Langkah 6: Jalankan Aplikasi
+1. Klik tombol **Restart** pada aplikasi Node.js Anda.
+2. Buka URL domain Anda.
+3. Seharusnya web sudah berjalan!
 
 ---
 
-## Langkah 5: Konfigurasi Environment (.env)
+## Cara Update Produk (Admin)
+Karena ini versi Node.js + MySQL, data tersimpan di Database.
+Untuk pertama kali, Anda belum punya produk.
+1. Gunakan Postman / HTTP Client untuk hit API Admin, atau
+2. Modifikasi kode sementara untuk bypass login admin jika perlu, tapi cara amannya adalah menggunakan endpoint yang sudah disediakan di `server.js`.
 
-1. Kembali ke **File Manager**, masuk ke folder aplikasi (`toko-app`).
-2. Cari file `.env.example`. Klik kanan -> **Rename** menjadi `.env`.
-   - *Catatan: Jika file tidak terlihat, klik tombol "Settings" di pojok kanan atas File Manager dan centang "Show Hidden Files (dotfiles)".*
-3. Klik kanan file `.env` -> **Edit**. Isi sesuai data Anda:
+**Endpoint Admin:**
+- Login: `POST /api/admin/login` (Body: `password`)
+- Tambah Produk: `POST /api/admin/add-product` (Header: `admin-key: PASSWORD_ADMIN`)
 
-   ```ini
-   PORT=3000
+*Tips: Jika Anda kesulitan menggunakan API secara manual, Anda bisa membuat halaman admin.html sederhana nanti.*
 
-   # Database (Sesuai Langkah 2)
-   DB_HOST=localhost
-   DB_USER=usercpanel_admin
-   DB_PASS=password_database_anda
-   DB_NAME=usercpanel_toko
-
-   # Password Admin (Untuk akses menu admin di website)
-   ADMIN_PASSWORD=ganti_password_rahasia
-
-   # Payment Gateway (Pakasir)
-   PAKASIR_SLUG=slug_project_pakasir
-   PAKASIR_API_KEY=api_key_pakasir
-   ```
-4. Klik **Save Changes**.
-
----
-
-## Langkah 6: Jalankan Aplikasi
-
-1. Kembali ke menu **Setup Node.js App** di cPanel.
-2. Klik tombol **Restart Application**.
-3. Buka URL domain/subdomain Anda di browser. Toko sudah siap digunakan!
-
----
-
-## Cara Menggunakan Admin Panel
-
-1. Buka website toko Anda.
-2. Klik tombol **Settings** (ikon gerigi) yang melayang di pojok kanan bawah layar.
-3. Masukkan password sesuai `ADMIN_PASSWORD` yang Anda atur di file `.env`.
-4. Dari panel ini Anda bisa:
-   - Menambah/Edit Produk.
-   - Mengatur Stok.
-   - Membuat Voucher Diskon.
-   - Mengganti Banner dan Nama Toko.
-
-## Troubleshooting
-
-- **Error Database Connection**: Pastikan username, password, dan nama database di file `.env` sudah benar. Pastikan user database sudah diberi hak akses (All Privileges).
-- **Gambar tidak muncul**: Pastikan URL gambar yang Anda masukkan valid (gunakan layanan hosting gambar seperti imgur atau postimg).
-- **Pembayaran Gagal**: Periksa kembali `PAKASIR_SLUG` dan `PAKASIR_API_KEY` di `.env`.
+## Integrasi Pembayaran (Pakasir)
+Pastikan Anda sudah mendaftar di Pakasir dan mendapatkan API Key serta Slug Toko. Masukkan data tersebut di Environment Variables (Langkah 5).
