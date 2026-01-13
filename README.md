@@ -94,6 +94,14 @@ Tambahkan variabel berikut sesuai data database Langkah 1:
 2. Buka URL domain Anda.
 3. Seharusnya web sudah berjalan!
 
+### 🔍 Cara Cek Error (Troubleshooting)
+Jika web tidak bisa dibuka atau muncul error:
+1. Buka **File Manager** di cPanel.
+2. Masuk ke folder aplikasi Anda (folder tempat `server.js` berada).
+3. Cari file bernama `error.log`.
+4. Klik kanan file tersebut lalu pilih **View** atau **Edit**.
+5. Di sana Anda bisa melihat detail errornya (misalnya: password database salah, atau nama database tidak ditemukan).
+
 ---
 
 ## Cara Update Produk (Admin)

@@ -1,5 +1,18 @@
 const mysql = require('mysql2/promise');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
+
+// Helper untuk log error ke file
+function logError(context, err) {
+    const msg = `[${new Date().toISOString()}] ${context}: ${err.message}\n`;
+    console.error(msg.trim());
+    try {
+        fs.appendFileSync(path.join(__dirname, 'error.log'), msg);
+    } catch (e) {
+        console.error("Gagal menulis ke error.log:", e.message);
+    }
+}
 
 // Buat connection pool agar efisien
 const pool = mysql.createPool({
@@ -28,7 +41,7 @@ async function dbGet(key, options = {}) {
         }
         return val;
     } catch (err) {
-        console.error(`DB Get Error (${key}):`, err.message);
+        logError(`DB Get Error (${key})`, err);
         return null;
     }
 }
@@ -44,7 +57,7 @@ async function dbPut(key, value) {
         );
         return true;
     } catch (err) {
-        console.error(`DB Put Error (${key}):`, err.message);
+        logError(`DB Put Error (${key})`, err);
         return false;
     }
 }
@@ -55,7 +68,7 @@ async function dbDelete(key) {
         await pool.execute('DELETE FROM kv_store WHERE key_name = ?', [key]);
         return true;
     } catch (err) {
-        console.error(`DB Delete Error (${key}):`, err.message);
+        logError(`DB Delete Error (${key})`, err);
         return false;
     }
 }
@@ -67,8 +80,10 @@ async function dbDelete(key) {
         console.log('Database connected successfully!');
         connection.release();
     } catch (err) {
-        console.error('Database connection failed:', err.message);
-        console.error('TIP: Pastikan variabel lingkungan (Environment Variables) DB_HOST, DB_USER, DB_PASS, DB_NAME sudah diatur dengan benar di cPanel atau file .env.');
+        logError('Database Connection Failed', err);
+        const tip = 'TIP: Pastikan variabel lingkungan (Environment Variables) DB_HOST, DB_USER, DB_PASS, DB_NAME sudah diatur dengan benar di cPanel atau file .env.\n';
+        console.error(tip);
+        try { fs.appendFileSync(path.join(__dirname, 'error.log'), `[TIP] ${tip}`); } catch(e){}
     }
 })();
 
