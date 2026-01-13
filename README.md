@@ -32,7 +32,18 @@ Ikuti panduan ini langkah demi langkah agar sukses.
 4. Buat User Database Baru (contoh: `namasaya_userdb`). **Catat Passwordnya!**
 5. Berikan hak akses **ALL PRIVILEGES** user tersebut ke database yang baru dibuat.
 6. Buka **phpMyAdmin**, pilih database yang baru dibuat.
-7. Klik tab **Import**, pilih file `schema.sql` yang ada di folder ini, lalu klik **Go**.
+7. Klik tab **SQL**, lalu Copy-Paste kode berikut ini dan klik **Go** (Kirim):
+
+```sql
+CREATE TABLE IF NOT EXISTS kv_store (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    key_name VARCHAR(191) NOT NULL UNIQUE,
+    value LONGTEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+*(Alternatif: Anda bisa juga menggunakan tab **Import** dan upload file `schema.sql`)*
 
 ### Langkah 2: Upload File
 1. Buka **File Manager** di cPanel.
